@@ -9,11 +9,6 @@
    ========================================================= */
 
 const PRODUCT_SOURCES = [
-  'products.json',
-  'product1.json',
-  'p.json',
-  'p2.json',
-  'q.json',
   'f.json'
   // 'products4.json',
   // 'products5.json',
