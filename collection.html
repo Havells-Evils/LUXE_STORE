@@ -28,7 +28,6 @@
             --nav-h: 3.6rem;
             --transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             --smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            /* Premium Orange Box Gradients */
             --orange-box: linear-gradient(135deg, #fff5eb 0%, #ffd8b1 100%);
             --orange-box-dark: linear-gradient(135deg, #5c3a2a 0%, #3e2723 100%);
         }
@@ -45,12 +44,8 @@
             --rose-gold-light: #f7e7ce;
         }
 
-        /* === DARK MODE VISIBILITY FIXES === */
         body.dark .footer-section h3,
-        body.dark .footer-section h4 {
-            color: #f7e7ce;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-        }
+        body.dark .footer-section h4 { color: #f7e7ce; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); }
         body.dark .discounted-price { color: #f7e7ce; }
         body.dark .discount-badge { color: #ff7675; }
         body.dark .mrp { color: #b0b0b0; }
@@ -63,13 +58,8 @@
             -webkit-text-size-adjust: 100%;
             text-size-adjust: 100%;
             scroll-padding-top: 9rem;
+            overflow-x: hidden;
         }
-        @media (min-width: 1500px) { html { font-size: 17px; } }
-        @media (min-width: 1750px) { html { font-size: 19px; } }
-        @media (min-width: 2050px) { html { font-size: 21px; } }
-        @media (min-width: 2400px) { html { font-size: 23px; } }
-        @media (min-width: 2800px) { html { font-size: 25px; } }
-
         body {
             font-family: 'Montserrat', sans-serif;
             font-size: 0.95rem;
@@ -79,6 +69,7 @@
             overflow-x: hidden;
             transition: var(--smooth);
             min-height: 100vh;
+            max-width: 100vw;
         }
         body.modal-open { overflow: hidden; }
         h1, h2, h3, h4 { font-family: 'Cormorant Garamond', serif; font-weight: 600; line-height: 1.2; }
@@ -157,13 +148,13 @@
             border-bottom: 1px solid rgba(183, 110, 121, 0.1);
         }
         .back-btn {
-            display: inline-flex; align-items: center; gap: 0.5rem;
+            display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
             padding: 0.62rem 1.5rem; border-radius: 3rem;
             font-weight: 500; cursor: pointer; transition: var(--smooth);
             background: var(--text-dark); color: var(--light-bg);
             border: 2px solid var(--text-dark);
             font-size: clamp(0.72rem, 0.25vw + 0.68rem, 0.85rem);
-            white-space: nowrap;
+            white-space: nowrap; flex: 1; max-width: max-content;
         }
         .back-btn:hover { background: transparent; color: var(--text-dark); transform: translateY(-2px); }
         body.dark .back-btn { background: var(--text-light); color: var(--dark-bg); border-color: var(--text-light); }
@@ -171,10 +162,10 @@
 
         .toolbar-right {
             display: flex; align-items: center; gap: 0.7rem;
-            flex: 1; justify-content: flex-end; min-width: 0;
+            flex: 2; justify-content: flex-end; min-width: 0;
         }
         .shuffle-btn {
-            display: inline-flex; align-items: center; gap: 0.45rem;
+            display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem;
             padding: 0.62rem 1.2rem; border-radius: 3rem;
             font-weight: 600; cursor: pointer; transition: var(--smooth);
             background: linear-gradient(135deg, var(--rose-gold), var(--rose-gold-dark));
@@ -214,7 +205,7 @@
         /* ========== ALPHABET & CATEGORY NAV ========== */
         .alphabet-nav {
             background: var(--card-bg);
-            padding: 0.7rem clamp(0.8rem, 3vw, 3rem);
+            padding: 0.7rem clamp(0.5rem, 3vw, 3rem);
             position: sticky; top: var(--nav-h); z-index: 98;
             box-shadow: 0 0.3rem 1rem rgba(0, 0, 0, 0.03);
             display: flex; justify-content: center; flex-wrap: wrap; gap: 0.35rem;
@@ -243,7 +234,7 @@
 
         .category-nav {
             background: var(--card-bg);
-            padding: 0.7rem clamp(0.8rem, 3vw, 3rem);
+            padding: 0.7rem clamp(0.5rem, 3vw, 3rem);
             position: relative; z-index: 97;
             overflow-x: auto; overflow-y: hidden; white-space: nowrap;
             scrollbar-width: thin; scrollbar-color: var(--rose-gold) transparent;
@@ -268,14 +259,16 @@
 
         /* ========== PRODUCTS GRID ========== */
         .collections-container {
-            padding: clamp(1.2rem, 3vw, 2.8rem) clamp(0.9rem, 4vw, 3.5rem);
+            padding: clamp(1.2rem, 3vw, 2.8rem) clamp(0.5rem, 4vw, 3.5rem);
             max-width: 96rem; margin: 0 auto; min-height: 60vh;
         }
+        
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
             gap: clamp(0.85rem, 1.4vw, 1.6rem);
             align-items: stretch;
+            justify-content: center;
         }
 
         .product-card {
@@ -295,16 +288,14 @@
             border-color: rgba(183, 110, 121, 0.25);
         }
 
-        /* === FIXED ORANGE BOX STYLING === */
         .product-image-container {
             position: relative;
             width: 100%;
-            height: 12rem;
             aspect-ratio: 1 / 1;
             flex: 0 0 auto;
             background: var(--orange-box);
             overflow: hidden;
-            padding: 1rem;
+            padding: 0.75rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -344,23 +335,25 @@
         }
 
         .product-info {
-            padding: 0.65rem 0.7rem 0.75rem;
+            padding: 0.75rem;
             flex: 1; display: flex; flex-direction: column;
         }
+        
         .product-info h3 {
-            font-size: clamp(0.85rem, 0.4vw + 0.75rem, 1.05rem);
-            margin-bottom: 0.25rem; color: var(--text-dark);
+            font-size: clamp(0.9rem, 0.4vw + 0.8rem, 1.15rem);
+            margin-bottom: 0.3rem; color: var(--text-dark);
             font-weight: 600; line-height: 1.2;
             display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
             overflow: hidden; min-height: 2.4em;
         }
 
-        .desc-block { margin-bottom: 0.45rem; }
+        .desc-block { margin-bottom: 0.5rem; }
+        
         .product-description {
-            font-size: clamp(0.68rem, 0.25vw + 0.62rem, 0.78rem);
+            font-size: clamp(0.7rem, 0.25vw + 0.65rem, 0.8rem);
             color: var(--text-dark); opacity: 0.75;
             line-height: 1.4;
-            display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
             overflow: hidden;
         }
 
@@ -368,11 +361,12 @@
             margin-top: auto;
             padding-top: 0.5rem;
             border-top: 1px solid rgba(183, 110, 121, 0.1);
+            margin-bottom: 0.5rem;
         }
         .product-features ul { list-style: none; }
         .product-features li {
-            position: relative; padding-left: 0.95rem; margin-bottom: 0.2rem;
-            font-size: clamp(0.62rem, 0.2vw + 0.58rem, 0.72rem);
+            position: relative; padding-left: 0.95rem; margin-bottom: 0.15rem;
+            font-size: clamp(0.65rem, 0.2vw + 0.6rem, 0.75rem);
             color: var(--text-dark); opacity: 0.8; line-height: 1.4;
         }
         .product-features li::before {
@@ -383,10 +377,10 @@
         .price-tag-container {
             display: flex; flex-direction: column;
             width: fit-content; align-self: flex-start;
-            margin-top: 0.45rem; margin-bottom: 0.4rem;
+            margin-top: 0.3rem; margin-bottom: 0.6rem;
             font-family: 'Montserrat', sans-serif; line-height: 1.3;
         }
-        .discount-row { display: flex; align-items: baseline; gap: 0.4rem; }
+        .discount-row { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.4rem; }
         .discount-badge { color: #e74c3c; font-weight: 700; font-size: 0.85rem; }
         .discounted-price {
             font-size: 1.3rem; font-weight: 700;
@@ -400,11 +394,12 @@
         }
         body.dark .mrp { color: #aaa; }
 
-        .product-actions { display: flex; gap: 0.4rem; margin-top: auto; }
+        .product-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: auto; }
+        
         .btn-action {
-            flex: 1; min-width: 0;
-            padding: 0.5rem 0.3rem; border-radius: 0.5rem; cursor: pointer;
-            font-weight: 600; font-size: clamp(0.62rem, 0.22vw + 0.58rem, 0.74rem);
+            flex: 1 1 45%; 
+            padding: 0.6rem 0.3rem; border-radius: 0.5rem; cursor: pointer;
+            font-weight: 600; font-size: clamp(0.65rem, 0.22vw + 0.6rem, 0.75rem);
             transition: var(--smooth); text-align: center; border: none;
             letter-spacing: 0.03em; white-space: nowrap;
             overflow: hidden; text-overflow: ellipsis;
@@ -458,7 +453,7 @@
             background: var(--card-bg);
             border-radius: 1.2rem;
             max-width: 65rem;
-            width: 90%;
+            width: 100%;
             overflow: hidden;
             box-shadow: 0 2rem 4rem rgba(0, 0, 0, 0.4);
             transform: translateY(20px) scale(0.95);
@@ -466,13 +461,12 @@
             border: 1px solid rgba(183, 110, 121, 0.15);
             display: grid;
             grid-template-columns: 1fr 1.2fr;
-            max-height: 85vh;
-            max-height: 85dvh;
+            max-height: 90vh;
+            max-height: 90dvh;
             position: relative;
         }
         .modal.open .modal-content { transform: translateY(0) scale(1); }
 
-        /* === FIXED ORANGE BOX FOR MODAL & GALLERY === */
         .modal-image {
             background: var(--orange-box);
             display: flex;
@@ -481,7 +475,6 @@
             padding: 2rem;
             position: relative;
             overflow: hidden;
-            min-height: 24rem;
             height: 100%;
             width: 100%;
             aspect-ratio: 1 / 1;
@@ -494,8 +487,7 @@
             flex-direction: column;
             position: relative;
             overflow-y: auto;
-            max-height: 85vh;
-            max-height: 85dvh;
+            max-height: 90dvh;
             border-left: 1px solid rgba(183, 110, 121, 0.1);
             scrollbar-width: thin; scrollbar-color: var(--rose-gold) transparent;
         }
@@ -507,16 +499,15 @@
 
         .modal-close {
             position: absolute; top: 1rem; right: 1rem;
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(0, 0, 0, 0.65); color: #fff;
             backdrop-filter: blur(4px);
-            border: none; font-size: 1rem; color: var(--text-dark);
+            border: none; font-size: 1rem;
             cursor: pointer; transition: var(--smooth);
             width: 2.5rem; height: 2.5rem; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             z-index: 100; box-shadow: 0 0.2rem 0.5rem rgba(0,0,0,0.1);
         }
-        body.dark .modal-close { color: var(--text-light); background: rgba(0, 0, 0, 0.4); }
-        .modal-close:hover { background: var(--rose-gold); color: #fff; transform: rotate(90deg); }
+        .modal-close:hover { background: #e74c3c; transform: rotate(90deg); }
 
         .modal-details .modal-tags {
             display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.8rem;
@@ -561,6 +552,7 @@
             margin: 1rem 0; padding: 1rem 0;
             border-top: 1px solid rgba(183, 110, 121, 0.15);
             border-bottom: 1px solid rgba(183, 110, 121, 0.15);
+            width: 100%;
         }
         .modal-details .discounted-price { font-size: 1.6rem; }
         .modal-details .mrp { font-size: 0.85rem; }
@@ -576,7 +568,6 @@
             position: sticky;
             bottom: 0;
             background: var(--card-bg);
-            padding-top: 1rem;
             z-index: 10;
             box-shadow: 0 -0.5rem 1rem rgba(0,0,0,0.05);
         }
@@ -601,6 +592,7 @@
 
         /* ========== GALLERY ========== */
         .modal-gallery {
+            position: relative;
             width: 100%;
             height: 100%;
             display: flex;
@@ -614,15 +606,15 @@
         .gallery-main {
             position: relative;
             flex: 1 1 auto;
-            min-height: 0;
+            min-height: 250px; 
             width: 100%;
-            height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
             background: var(--orange-box);
-            padding: 1rem;
+            padding: 1rem 4rem; 
+            border-radius: 0.6rem;
         }
         body.dark .gallery-main { background: var(--orange-box-dark); }
 
@@ -638,42 +630,41 @@
         }
         .gallery-main img.is-fading { opacity: 0; }
 
+        /* Side Arrows */
         .gallery-arrow {
-            position: absolute; top: 50%;
+            position: absolute; 
+            top: 50%; 
             transform: translateY(-50%);
-            width: 2.2rem; height: 2.2rem;
+            width: 2.5rem; height: 2.5rem;
             border-radius: 50%; border: none; cursor: pointer;
-            background: rgba(255, 255, 255, 0.9);
-            color: var(--rose-gold-dark);
+            background: rgba(0, 0, 0, 0.65); color: #fff;
             display: flex; align-items: center; justify-content: center;
-            font-size: 0.8rem;
-            box-shadow: 0 0.25rem 0.7rem rgba(0, 0, 0, 0.15);
+            font-size: 1rem; backdrop-filter: blur(4px);
             transition: var(--smooth); z-index: 3;
         }
-        body.dark .gallery-arrow { background: rgba(0, 0, 0, 0.55); color: var(--text-light); }
-        .gallery-arrow:hover { background: var(--rose-gold); color: #fff; }
-        .gallery-arrow.prev { left: 0.15rem; }
-        .gallery-arrow.next { right: 0.15rem; }
+        .gallery-arrow:hover { background: var(--rose-gold); }
+        .gallery-arrow.prev { left: 1rem; }
+        .gallery-arrow.next { right: 1rem; }
 
-        .gallery-count {
-            position: absolute; bottom: 0.4rem; right: 0.4rem;
-            background: rgba(0, 0, 0, 0.6); color: #fff;
-            font-size: 0.62rem; font-weight: 600;
-            padding: 0.14rem 0.5rem; border-radius: 3rem;
-            letter-spacing: 0.05em;
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-        }
-
+        /* Thumbnails */
         .gallery-thumbs {
             flex: 0 0 auto;
-            display: flex; flex-wrap: wrap;
-            justify-content: center; gap: 0.45rem;
+            display: flex; 
+            flex-wrap: nowrap;
+            justify-content: center; 
+            gap: 0.6rem;
+            width: 100%;
+            overflow-x: auto;
+            padding: 0.5rem 4rem; /* Padding for bottom left/right buttons */
+            scrollbar-width: none;
+            -ms-overflow-style: none;
         }
+        .gallery-thumbs::-webkit-scrollbar { display: none; }
+
         .gallery-thumb {
-            width: 3.5rem;
-            height: 3.5rem;
-            aspect-ratio: 1 / 1;
+            width: 4.5rem;
+            height: 4.5rem;
+            flex-shrink: 0;
             padding: 0.4rem;
             border-radius: 0.55rem;
             border: 2px solid transparent;
@@ -681,7 +672,6 @@
             cursor: pointer;
             display: flex; align-items: center; justify-content: center;
             overflow: hidden; transition: var(--smooth);
-            flex-shrink: 0;
         }
         body.dark .gallery-thumb { background: var(--orange-box-dark); }
         .gallery-thumb img {
@@ -695,115 +685,100 @@
             box-shadow: 0 0 0.6rem rgba(183, 110, 121, 0.45);
         }
 
-        /* ========== RESPONSIVE ========== */
-        @media (max-width: 992px) and (min-width: 521px) {
-            .modal { padding: 1rem; }
-            .modal-content {
-                grid-template-columns: 1fr;
-                max-height: 90vh;
-                max-height: 90dvh;
-                width: 95%;
-                max-width: 50rem;
-            }
-            .modal-image {
-                position: relative;
-                height: 40vh;
-                max-height: 40vh;
-                min-height: 0;
-                padding: 1.2rem;
-                border-radius: 1.2rem 1.2rem 0 0;
-                aspect-ratio: auto;
-            }
-            .modal-details {
-                padding: 1.5rem;
-                max-height: 50vh;
-                border-left: none;
-                border-top: 1px solid rgba(183, 110, 121, 0.1);
-                border-radius: 0 0 1.2rem 1.2rem;
-            }
-            .gallery-thumb { width: 2.8rem; height: 2.8rem; }
+        /* Bottom Corner Controls */
+        .gallery-fullscreen-btn {
+            position: absolute; 
+            bottom: 1rem; 
+            left: 1rem;
+            background: rgba(0, 0, 0, 0.65); color: #fff;
+            border: none; border-radius: 50%;
+            width: 2.5rem; height: 2.5rem;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; z-index: 5; font-size: 0.9rem;
+            backdrop-filter: blur(4px);
+            transition: var(--smooth);
+        }
+        .gallery-fullscreen-btn:hover { background: var(--rose-gold); }
+
+        .gallery-count {
+            position: absolute; 
+            bottom: 1.25rem; 
+            right: 1rem;
+            background: rgba(0, 0, 0, 0.65); color: #fff;
+            font-size: 0.85rem; font-weight: 600;
+            padding: 0 1rem; height: 2rem; border-radius: 2rem;
+            display: flex; align-items: center; justify-content: center;
+            backdrop-filter: blur(4px); z-index: 3;
         }
 
-        @media (max-width: 520px) {
-            .modal { padding: 0; align-items: flex-end; }
-            .modal-content {
-                max-height: 92vh;
-                max-height: 92dvh;
-                width: 100%;
-                border-radius: 1.2rem 1.2rem 0 0;
-                transform: translateY(100%);
-                transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
-            }
-            .modal.open .modal-content { transform: translateY(0); }
-            .modal-image {
-                height: 35vh;
-                max-height: 35vh;
-                min-height: 12rem;
-                padding: 1rem;
-                border-radius: 1.2rem 1.2rem 0 0;
-                aspect-ratio: auto;
-            }
-            .modal-details {
-                padding: 1.2rem;
-                max-height: 57vh;
-                border-radius: 0;
-            }
-            .modal-details h2 {
-                font-size: 1.25rem;
-                margin-top: 0.3rem;
-                padding-right: 2.5rem;
-            }
-            .modal-details .product-description { font-size: 0.85rem; }
-            .modal-close {
-                top: 0.8rem; right: 0.8rem;
-                width: 2.2rem; height: 2.2rem; font-size: 0.9rem;
-            }
-            .gallery-thumb { width: 3rem; height: 3rem; }
-            .gallery-arrow { width: 1.9rem; height: 1.9rem; font-size: 0.7rem; }
-            .gallery-count { font-size: 0.56rem; bottom: 0.2rem; right: 0.2rem; }
+        /* ========== FULLSCREEN IMAGE OVERLAY ========== */
+        .fullscreen-overlay {
+            position: fixed; inset: 0; z-index: 10000;
+            background: rgba(10, 5, 8, 0.98);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+        }
+        .fullscreen-overlay.open { opacity: 1; visibility: visible; }
 
-            html { font-size: 15.5px; }
-            .collection-header { padding-top: calc(var(--nav-h) + 1.2rem); }
-            .products-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 10.5rem), 1fr)); gap: 0.7rem; }
-
-            /* Mobile Fixed Orange Box Adjustment */
-            .product-image-container {
-                height: 10rem;
-                padding: 0.75rem;
-            }
-
-            .product-info { padding: 0.6rem 0.6rem 0.7rem; }
-            .product-info h3 { min-height: 2.2em; font-size: 0.9rem; }
-            .product-badge { top: 0.35rem; right: 0.35rem; padding: 0.15rem 0.4rem; font-size: 0.5rem; }
-            .product-category-tag { top: 0.35rem; left: 0.35rem; padding: 0.14rem 0.38rem; font-size: 0.48rem; }
-            .page-btn { width: 2.2rem; height: 2.2rem; font-size: 0.8rem; }
-            .toggle-btn { padding: 0.45rem 0.75rem; font-size: 0.72rem; }
-            .discounted-price { font-size: 1.1rem; }
-            .discount-badge { font-size: 0.75rem; }
-
-            /* Mobile toolbar adjustments */
-            .toolbar-right { flex-direction: row; width: 100%; gap: 0.5rem; }
-            .shuffle-btn { padding: 0.55rem 0.9rem; font-size: 0.72rem; }
-            .search-box { max-width: none; }
+        .fullscreen-img-wrapper {
+            width: 90vw;
+            height: 85vh;
+            max-width: 1200px;
+            max-height: 900px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1.5rem;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), inset 0 0 0 1px rgba(255,255,255,0.05);
+            display: flex; align-items: center; justify-content: center;
+            position: relative;
+            padding: 1.5rem;
+            overflow: hidden;
+        }
+        
+        .fullscreen-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 0.8rem;
+            user-select: none; -webkit-user-drag: none;
+            transition: transform 0.3s ease;
         }
 
-        @media (max-width: 360px) {
-            .products-grid { grid-template-columns: 1fr; }
-            .product-image-container { height: 9rem; }
-            .product-actions { gap: 0.35rem; }
+        .fullscreen-close {
+            position: absolute; top: 1.5rem; right: 1.5rem;
+            background: rgba(255,255,255,0.15); color: #fff;
+            border: none; border-radius: 50%;
+            width: 3rem; height: 3rem;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; z-index: 10001; font-size: 1.2rem;
+            transition: var(--smooth);
         }
+        .fullscreen-close:hover { background: #e74c3c; transform: rotate(90deg); }
 
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-                scroll-behavior: auto !important;
-            }
+        .fullscreen-nav {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            background: rgba(255,255,255,0.15); color: #fff;
+            border: none; border-radius: 50%;
+            width: 3rem; height: 3rem;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; z-index: 10001; font-size: 1.2rem;
+            transition: var(--smooth);
+        }
+        .fullscreen-nav:hover { background: var(--rose-gold); }
+        .fullscreen-nav.prev { left: 1.5rem; }
+        .fullscreen-nav.next { right: 1.5rem; }
+
+        .fullscreen-count {
+            position: absolute; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+            color: #fff; font-size: 0.9rem; font-weight: 500;
+            background: rgba(0,0,0,0.6); padding: 0.4rem 1.2rem; border-radius: 2rem;
+            letter-spacing: 0.08em; pointer-events: none;
         }
 
         /* ========== LOADER & FOOTER ========== */
-        .loader-container { display: flex; justify-content: center; align-items: center; padding: 5rem 0; }
+        .loader-container { display: flex; justify-content: center; align-items: center; padding: 5rem 0; width: 100%; }
         .loader {
             width: 3rem; height: 3rem;
             border: 4px solid rgba(183, 110, 121, 0.2);
@@ -853,6 +828,160 @@
             border-top: 1px solid rgba(255, 255, 255, 0.08);
             font-size: 0.78rem; opacity: 0.6; line-height: 1.7;
         }
+
+        /* =========================================
+           RESPONSIVE BREAKPOINTS
+           ========================================= */
+        @media (min-width: 1440px) {
+            html { font-size: 17px; }
+            .products-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr)); }
+        }
+
+        @media (max-width: 1024px) {
+            .modal-content {
+                grid-template-columns: 1fr;
+                max-height: 95dvh;
+                width: 90%;
+            }
+            .modal-image {
+                height: 35vh;
+                max-height: 35vh;
+                padding: 1rem;
+                border-radius: 1.2rem 1.2rem 0 0;
+                aspect-ratio: auto;
+            }
+            .modal-details {
+                padding: 1.5rem;
+                max-height: 60vh;
+                border-left: none;
+                border-top: 1px solid rgba(183, 110, 121, 0.1);
+            }
+            .products-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr)); }
+        }
+
+        @media (max-width: 768px) {
+            .toolbar-row { flex-direction: column; align-items: stretch; gap: 0.8rem; }
+            .back-btn { max-width: 100%; width: 100%; }
+            .toolbar-right { flex-direction: column; align-items: stretch; gap: 0.6rem; width: 100%; }
+            .search-box { max-width: 100%; margin-left: 0; }
+            .shuffle-btn { width: 100%; }
+            
+            .products-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 11rem), 1fr)); }
+            .product-info h3 { font-size: 1rem; }
+            
+            .modal { padding: 0; align-items: flex-end; }
+            .modal-content { width: 100%; border-radius: 1.2rem 1.2rem 0 0; }
+            .modal-image { height: 35vh; min-height: 14rem; }
+            .modal-details { padding: 1.2rem; max-height: 65vh; }
+
+            .fullscreen-img-wrapper { width: 95vw; height: 75vh; padding: 0.5rem; border-radius: 1rem; }
+            .fullscreen-nav { width: 2.5rem; height: 2.5rem; font-size: 1rem; }
+            .fullscreen-nav.prev { left: 0.5rem; }
+            .fullscreen-nav.next { right: 0.5rem; }
+            .fullscreen-close { top: 1rem; right: 1rem; width: 2.5rem; height: 2.5rem; }
+        }
+
+        /* NEW: Switch to exactly 1 column and adjust buttons */
+        @media (max-width: 520px) {
+            .products-grid { 
+                grid-template-columns: 1fr; 
+                gap: 1rem; 
+            }
+            .product-image-container { 
+                height: 16rem;
+                aspect-ratio: auto; 
+            }
+            .product-info { padding: 1rem; }
+            .product-actions { 
+                flex-direction: row; 
+                gap: 0.6rem; 
+            }
+            .btn-action { 
+                flex: 1 1 0%; 
+                padding: 0.75rem; 
+                font-size: 0.8rem; 
+            }
+        }
+
+        @media (max-width: 425px) {
+            html { font-size: 15px; }
+            :root { --nav-h: 3.2rem; }
+            
+            .navbar { padding: 0.5rem 0.8rem; }
+            .logo { font-size: 1.3rem; }
+            .toggle-btn { padding: 0.45rem 0.8rem; font-size: 0.72rem; }
+            
+            .collection-header { padding-top: calc(var(--nav-h) + 1.5rem); }
+            .collection-header h1 { font-size: 2rem; }
+            
+            .alphabet-nav { padding: 0.5rem 0.2rem; gap: 0.25rem; }
+            .alphabet-nav button { width: 1.8rem; height: 1.8rem; font-size: 0.65rem; }
+            .category-nav { padding: 0.5rem 0.2rem; }
+            .category-nav a { padding: 0.4rem 0.8rem; font-size: 0.7rem; }
+            
+            .product-image-container { height: 14rem; padding: 0.5rem; }
+            .product-info { padding: 0.8rem; }
+            .product-info h3 { font-size: 1rem; min-height: auto; }
+            .product-description { font-size: 0.75rem; -webkit-line-clamp: 2; }
+            
+            .discounted-price { font-size: 1.2rem; }
+            .mrp { font-size: 0.7rem; }
+            .discount-badge { font-size: 0.75rem; }
+            
+            .product-actions { flex-direction: column; gap: 0.4rem; }
+            .btn-action { 
+                flex: none;
+                width: 100%;
+                padding: 0.65rem; 
+                font-size: 0.75rem; 
+                border-radius: 0.4rem; 
+            }
+            
+            .page-btn { width: 2rem; height: 2rem; font-size: 0.75rem; }
+
+            /* Mobile adjustments for Gallery Controls */
+            .gallery-arrow { width: 2rem; height: 2rem; font-size: 0.8rem; }
+            .gallery-arrow.prev { left: 0.5rem; }
+            .gallery-arrow.next { right: 0.5rem; }
+            
+            .gallery-fullscreen-btn { width: 2rem; height: 2rem; left: 0.5rem; bottom: 0.8rem; font-size: 0.8rem; }
+            .gallery-count { right: 0.5rem; bottom: 1rem; height: 1.8rem; font-size: 0.75rem; padding: 0 0.8rem; }
+            
+            .modal-close { width: 2.2rem; height: 2.2rem; top: 0.8rem; right: 0.8rem; }
+            .gallery-main { padding: 1rem 2.8rem; min-height: 200px; }
+            .gallery-thumb { width: 3.8rem; height: 3.8rem; }
+            .gallery-thumbs { padding: 0.5rem 3rem; }
+        }
+
+        @media (max-width: 375px) {
+            .products-grid { gap: 0.8rem; }
+            .product-info { padding: 0.6rem; }
+            .product-info h3 { font-size: 0.9rem; }
+            .product-category-tag, .product-badge { font-size: 0.45rem; padding: 0.1rem 0.3rem; }
+            .price-tag-container { margin: 0.2rem 0; }
+            .modal-details .btn-action { padding: 0.8rem; font-size: 0.85rem; }
+
+            .gallery-thumb { width: 3.4rem; height: 3.4rem; }
+            .gallery-thumbs { padding: 0.5rem 2.8rem; }
+        }
+
+        @media (max-width: 320px) {
+            html { font-size: 14px; }
+            .back-btn { font-size: 0.7rem; padding: 0.5rem 1rem; }
+            .shuffle-btn { font-size: 0.7rem; padding: 0.5rem 1rem; }
+
+            .gallery-thumb { width: 3rem; height: 3rem; }
+            .gallery-thumbs { padding: 0.5rem 2.5rem; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -881,7 +1010,7 @@
             </button>
             <div class="search-box">
                 <i class="fas fa-search"></i>
-                <input type="text" id="search-input" placeholder="Search products by name or description..." oninput="filterProducts()">
+                <input type="text" id="search-input" placeholder="Search products..." oninput="filterProducts()">
             </div>
         </div>
     </div>
@@ -900,6 +1029,7 @@
         <div class="pagination" id="pagination"></div>
     </div>
 
+    <!-- Quick View Modal -->
     <div class="modal" id="product-modal">
         <div class="modal-content">
             <button class="modal-close" onclick="closeModal()" aria-label="Close">
@@ -907,6 +1037,23 @@
             </button>
             <div class="modal-body" id="modal-body" style="display: contents;"></div>
         </div>
+    </div>
+
+    <!-- Fullscreen Image Overlay -->
+    <div class="fullscreen-overlay" id="fullscreen-overlay">
+        <button class="fullscreen-close" onclick="closeFullScreen()" aria-label="Close Fullscreen">
+            <i class="fas fa-times"></i>
+        </button>
+        <button class="fullscreen-nav prev" onclick="fullscreenStep(-1)" aria-label="Previous Image">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <div class="fullscreen-img-wrapper" id="fullscreen-wrapper">
+            <img id="fullscreen-img" src="" alt="Fullscreen View">
+        </div>
+        <button class="fullscreen-nav next" onclick="fullscreenStep(1)" aria-label="Next Image">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+        <div class="fullscreen-count" id="fullscreen-count"></div>
     </div>
 
     <footer class="footer">
@@ -921,7 +1068,6 @@
                     <li><a href="index.html">Home</a></li>
                     <li><a href="collection.html">Collections</a></li>
                     <li><a href="index.html#experience">About Us</a></li>
-                   <!-- <li><a href="index.html">Contact</a></li> -->
                     <li><a href="index.html?openContact=1">Contact</a></li>
                 </ul>
             </div>
@@ -937,6 +1083,8 @@
             <p>&copy; 2026 JBH — Jaiswal Beauty Hub. All rights reserved. | Crafted with <i class="fas fa-heart" style="color:#b76e79;"></i> for beauty lovers</p>
         </div>
     </footer>
+
+    <script src="product-sources.js"></script>
 
     <script>
         let allProducts = [];
@@ -957,57 +1105,33 @@
             renderCategories();
         });
 
-        /* =========================================================
-           RANDOM SHUFFLE (Fisher–Yates)
-           Products are not shown in fixed ID order.
-           The array is shuffled once on load, and the order stays
-           stable while you paginate / filter / search.
-           ========================================================= */
-        function shuffleArray(arr) {
-            const a = [...arr];
-            for (let i = a.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [a[i], a[j]] = [a[j], a[i]];
-            }
-            return a;
-        }
-
         async function fetchProducts() {
+            const loader = document.getElementById('loader');
+
             try {
-                // NOTE: Ensure products.json exists in the same directory.
-                // If testing locally without a server, this may fail due to CORS.
-                const response = await fetch('products.json');
-                if (!response.ok) throw new Error('Failed to load products');
-                const raw = await response.json();
-
-                const normalized = raw.map(p => ({
-                    ...p,
-                    features: [...new Set(Array.isArray(p.features) ? p.features : [])],
-                    images: Array.isArray(p.images) && p.images.filter(Boolean).length
-                        ? p.images.filter(Boolean)
-                        : (p.image ? [p.image] : [])
-                }));
-
-                // 🔀 Randomize the product order on every page load
-                allProducts = shuffleArray(normalized);
+                const { merged, failedFiles } = await loadAllProducts();
+                allProducts = shuffleArray(merged);
                 filteredProducts = [...allProducts];
 
-                document.getElementById('loader').style.display = 'none';
+                loader.style.display = 'none';
                 document.getElementById('products-grid').style.display = 'grid';
 
                 renderProducts();
                 setupPagination();
+
+                if (failedFiles.length) {
+                    console.warn('Files that failed to load:', failedFiles.join(', '));
+                }
+
             } catch (error) {
                 console.error('Error loading products:', error);
-                document.getElementById('loader').innerHTML =
-                    '<p style="color: var(--rose-gold); text-align:center; padding: 0 1rem; font-size: 24px;">Loading...</p>';
+                loader.innerHTML =
+                    '<p style="color: var(--rose-gold); text-align:center; padding: 0 1rem; font-size: 20px;">Loading...</p>';
             }
         }
 
-        /* 🔀 Manual re-shuffle from the toolbar button */
         function reshuffleProducts(btn) {
             if (!allProducts.length) return;
-
             allProducts = shuffleArray(allProducts);
 
             if (btn) {
@@ -1200,7 +1324,7 @@
                 pagination.appendChild(prevBtn);
             }
 
-            const maxVisiblePages = window.innerWidth < 520 ? 3 : 5;
+            const maxVisiblePages = window.innerWidth < 768 ? 3 : 5;
             let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
             let endPage = Math.min(pageCount, startPage + maxVisiblePages - 1);
             if (endPage - startPage < maxVisiblePages - 1) {
@@ -1229,7 +1353,6 @@
             }
         }
 
-        /* ============ QUICK VIEW HELPERS ============ */
         function getProductImages(product) {
             if (Array.isArray(product.images) && product.images.filter(Boolean).length) {
                 return product.images.filter(Boolean);
@@ -1251,7 +1374,6 @@
                 <button class="gallery-arrow next" type="button" onclick="galleryStep(1)" aria-label="Next image">
                     <i class="fas fa-chevron-right"></i>
                 </button>
-                <span class="gallery-count"><span id="gallery-current">1</span> / ${galleryImages.length}</span>
             ` : '';
 
             const thumbs = hasMany ? `
@@ -1265,6 +1387,7 @@
                 </div>
             ` : '';
 
+            // The fullscreen button and count are moved OUTSIDE the gallery-main div so they sit in the corners of the whole gallery area
             return `
                 <div class="modal-gallery">
                     <div class="gallery-main" id="gallery-main">
@@ -1272,6 +1395,16 @@
                         ${arrows}
                     </div>
                     ${thumbs}
+                    ${hasMany ? `
+                        <button class="gallery-fullscreen-btn" type="button" onclick="openFullScreen()" title="View Fullscreen">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                        <span class="gallery-count"><span id="gallery-current">1</span> / ${galleryImages.length}</span>
+                    ` : `
+                        <button class="gallery-fullscreen-btn" type="button" onclick="openFullScreen()" title="View Fullscreen">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    `}
                 </div>
             `;
         }
@@ -1301,6 +1434,12 @@
 
             const counter = document.getElementById('gallery-current');
             if (counter) counter.textContent = galleryIndex + 1;
+            
+            // Sync with fullscreen if it is open
+            const fsOverlay = document.getElementById('fullscreen-overlay');
+            if (fsOverlay.classList.contains('open')) {
+                updateFullScreenImage();
+            }
         }
 
         function galleryStep(dir) { setGalleryImage(galleryIndex + dir); }
@@ -1351,14 +1490,76 @@
         function closeModal() {
             const modal = document.getElementById('product-modal');
             modal.classList.remove('open');
-            document.body.classList.remove('modal-open');
+            // Only remove modal-open if fullscreen is not open
+            if (!document.getElementById('fullscreen-overlay').classList.contains('open')) {
+                document.body.classList.remove('modal-open');
+            }
         }
 
         document.getElementById('product-modal').addEventListener('click', function (e) {
             if (e.target === this) closeModal();
         });
 
+        /* ============ FULLSCREEN LOGIC ============ */
+        function openFullScreen() {
+            if (!galleryImages.length) return;
+            const overlay = document.getElementById('fullscreen-overlay');
+            overlay.classList.add('open');
+            document.body.classList.add('modal-open');
+            updateFullScreenImage();
+        }
+
+        function closeFullScreen() {
+            const overlay = document.getElementById('fullscreen-overlay');
+            overlay.classList.remove('open');
+            // Only remove modal-open if the Quick View modal is also closed
+            if (!document.getElementById('product-modal').classList.contains('open')) {
+                document.body.classList.remove('modal-open');
+            }
+        }
+
+        function fullscreenStep(dir) {
+            // Reuse the main gallery logic to keep everything in sync
+            setGalleryImage(galleryIndex + dir); 
+            // updateFullScreenImage is called inside setGalleryImage
+        }
+
+        function updateFullScreenImage() {
+            const img = document.getElementById('fullscreen-img');
+            const count = document.getElementById('fullscreen-count');
+            const hasMany = galleryImages.length > 1;
+            
+            if (img && galleryImages.length) {
+                img.src = galleryImages[galleryIndex];
+            }
+            if (count) {
+                count.style.display = hasMany ? 'block' : 'none';
+                count.textContent = `${galleryIndex + 1} / ${galleryImages.length}`;
+            }
+            
+            document.querySelectorAll('.fullscreen-nav').forEach(btn => {
+                btn.style.display = hasMany ? 'flex' : 'none';
+            });
+        }
+
+        // Click overlay to close
+        document.getElementById('fullscreen-overlay').addEventListener('click', function(e) {
+            // If clicking the dark background (not the image wrapper or buttons)
+            if (e.target === this) {
+                closeFullScreen();
+            }
+        });
+
+        /* ============ KEYBOARD NAVIGATION ============ */
         document.addEventListener('keydown', (e) => {
+            const fsOpen = document.getElementById('fullscreen-overlay').classList.contains('open');
+            if (fsOpen) {
+                if (e.key === 'Escape') closeFullScreen();
+                if (e.key === 'ArrowLeft') fullscreenStep(-1);
+                if (e.key === 'ArrowRight') fullscreenStep(1);
+                return; // Stop propagation to modal
+            }
+            
             const isOpen = document.getElementById('product-modal').classList.contains('open');
             if (!isOpen) return;
             if (e.key === 'Escape') closeModal();
@@ -1366,23 +1567,47 @@
             if (e.key === 'ArrowRight') galleryStep(1);
         });
 
-        (function initGallerySwipe() {
+        /* ============ SWIPE GESTURES ============ */
+        (function initSwipeGestures() {
             const modal = document.getElementById('product-modal');
+            const fsOverlay = document.getElementById('fullscreen-overlay');
             let startX = null, startY = null;
-            modal.addEventListener('touchstart', (e) => {
-                if (!e.target.closest('.gallery-main')) return;
+
+            // Touch functions
+            const handleTouchStart = (e) => {
                 startX = e.touches[0].clientX;
                 startY = e.touches[0].clientY;
-            }, { passive: true });
-            modal.addEventListener('touchend', (e) => {
+            };
+
+            const handleTouchEnd = (e, isFullscreen) => {
                 if (startX === null) return;
                 const dx = e.changedTouches[0].clientX - startX;
                 const dy = e.changedTouches[0].clientY - startY;
+                
                 if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) && galleryImages.length > 1) {
-                    galleryStep(dx < 0 ? 1 : -1);
+                    if (isFullscreen) {
+                        fullscreenStep(dx < 0 ? 1 : -1);
+                    } else {
+                        galleryStep(dx < 0 ? 1 : -1);
+                    }
                 }
                 startX = null; startY = null;
+            };
+
+            // Modal gallery swipe
+            modal.addEventListener('touchstart', (e) => {
+                if (!e.target.closest('.gallery-main')) return;
+                handleTouchStart(e);
             }, { passive: true });
+            
+            modal.addEventListener('touchend', (e) => {
+                if (!e.target.closest('.gallery-main')) return;
+                handleTouchEnd(e, false);
+            }, { passive: true });
+
+            // Fullscreen swipe
+            fsOverlay.addEventListener('touchstart', handleTouchStart, { passive: true });
+            fsOverlay.addEventListener('touchend', (e) => handleTouchEnd(e, true), { passive: true });
         })();
     </script>
 </body>
