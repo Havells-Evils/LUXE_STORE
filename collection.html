@@ -1084,9 +1084,13 @@
         </div>
     </footer>
 
-    <script src="product-sources.js"></script>
+    <!-- ✅ FIXED FILENAME: underscore, not dash -->
+    <script src="product_sources.js"></script>
 
     <script>
+        /* =========================================================
+           GLOBALS
+           ========================================================= */
         let allProducts = [];
         let filteredProducts = [];
         let currentPage = 1;
@@ -1098,6 +1102,37 @@
         let galleryImages = [];
         let galleryIndex = 0;
 
+        /* Inline SVG placeholder for broken images */
+        const FALLBACK_IMAGE = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(
+            '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400">' +
+            '<rect width="100%" height="100%" fill="#f7e7ce"/>' +
+            '<text x="50%" y="50%" font-family="sans-serif" font-size="26" fill="#b76e79" ' +
+            'text-anchor="middle" dominant-baseline="middle">No Image</text></svg>'
+        );
+
+        function handleImgError(img) {
+            if (!img) return;
+            img.onerror = null;
+            img.src = FALLBACK_IMAGE;
+        }
+        window.handleImgError = handleImgError;
+
+        /* Escape user/json content before injecting into innerHTML */
+        function escapeHtml(value) {
+            return String(value == null ? '' : value).replace(/[&<>"']/g, function (c) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+            });
+        }
+
+        /* First alphabetic character of a name (for A–Z filter) */
+        function firstLetter(name) {
+            const m = String(name || '').match(/[A-Za-z]/);
+            return m ? m[0].toUpperCase() : '#';
+        }
+
+        /* =========================================================
+           BOOT
+           ========================================================= */
         document.addEventListener('DOMContentLoaded', async () => {
             loadTheme();
             initAlphabetNavigation();
@@ -1107,6 +1142,7 @@
 
         async function fetchProducts() {
             const loader = document.getElementById('loader');
+            const grid = document.getElementById('products-grid');
 
             try {
                 const { merged, failedFiles } = await loadAllProducts();
@@ -1114,7 +1150,7 @@
                 filteredProducts = [...allProducts];
 
                 loader.style.display = 'none';
-                document.getElementById('products-grid').style.display = 'grid';
+                grid.style.display = 'grid';
 
                 renderProducts();
                 setupPagination();
@@ -1122,11 +1158,12 @@
                 if (failedFiles.length) {
                     console.warn('Files that failed to load:', failedFiles.join(', '));
                 }
-
             } catch (error) {
                 console.error('Error loading products:', error);
                 loader.innerHTML =
-                    '<p style="color: var(--rose-gold); text-align:center; padding: 0 1rem; font-size: 20px;">Loading...</p>';
+                    '<p style="color: var(--rose-gold); text-align:center; padding: 0 1rem; font-size: 1.05rem;">' +
+                    'Products could not be loaded.<br><small style="opacity:.7">Check that f.json exists and you are running the site on a server (GitHub Pages / Netlify), not by double-clicking the file.</small>' +
+                    '</p>';
             }
         }
 
@@ -1163,6 +1200,9 @@
             }
         }
 
+        /* =========================================================
+           ALPHABET NAV
+           ========================================================= */
         function initAlphabetNavigation() {
             const alphabetNav = document.getElementById('alphabet-nav');
             const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -1173,7 +1213,7 @@
             allButton.addEventListener('click', (e) => filterByAlphabet('', e.currentTarget));
             alphabetNav.appendChild(allButton);
 
-            for (let letter of alphabet) {
+            for (const letter of alphabet) {
                 const button = document.createElement('button');
                 button.textContent = letter;
                 button.addEventListener('click', (e) => filterByAlphabet(letter, e.currentTarget));
@@ -1183,20 +1223,23 @@
 
         function filterByAlphabet(letter, targetBtn) {
             currentAlphabetFilter = letter;
+
             document.querySelectorAll('.alphabet-nav button').forEach(btn => btn.classList.remove('active'));
             if (targetBtn) targetBtn.classList.add('active');
-            else document.querySelector('.alphabet-nav button').classList.add('active');
-
-            document.querySelectorAll('.category-nav a').forEach(link => {
-                const category = link.dataset.category || '';
-                link.style.display = (letter === '' || category.charAt(0).toUpperCase() === letter) ? 'flex' : 'none';
-            });
 
             applyFilters();
         }
 
+        /* =========================================================
+           CATEGORIES
+           ========================================================= */
         function renderCategories() {
-            const categories = ['all', ...new Set(allProducts.map(p => p.category))];
+            const categories = ['all', ...new Set(allProducts.map(p => p.category).filter(Boolean))].sort((a, b) => {
+                if (a === 'all') return -1;
+                if (b === 'all') return 1;
+                return a.localeCompare(b);
+            });
+
             const categoryList = document.getElementById('category-list');
             categoryList.innerHTML = '';
 
@@ -1207,7 +1250,7 @@
                 a.dataset.category = category;
                 a.innerHTML = category === 'all'
                     ? '<i class="fas fa-star"></i> All Items'
-                    : `<i class="fas fa-tag"></i> ${category}`;
+                    : `<i class="fas fa-tag"></i> ${escapeHtml(category)}`;
                 if (category === 'all') a.classList.add('active');
 
                 a.addEventListener('click', (e) => {
@@ -1223,27 +1266,42 @@
             });
         }
 
+        /* =========================================================
+           FILTERING
+           ========================================================= */
         function filterProducts() {
-            currentSearchTerm = document.getElementById('search-input').value;
+            currentSearchTerm = document.getElementById('search-input').value || '';
             currentPage = 1;
             applyFilters();
         }
 
         function applyFilters() {
+            const term = currentSearchTerm.trim().toLowerCase();
+
             filteredProducts = allProducts.filter(product => {
-                const matchesCategory = currentCategory === 'all' || product.category === currentCategory;
-                const matchesAlphabet = currentAlphabetFilter === '' ||
-                    product.category.charAt(0).toUpperCase() === currentAlphabetFilter;
-                const matchesSearch = currentSearchTerm === '' ||
-                    product.name.toLowerCase().includes(currentSearchTerm.toLowerCase()) ||
-                    product.description.toLowerCase().includes(currentSearchTerm.toLowerCase());
+                const matchesCategory =
+                    currentCategory === 'all' || product.category === currentCategory;
+
+                const matchesAlphabet =
+                    currentAlphabetFilter === '' || firstLetter(product.name) === currentAlphabetFilter;
+
+                const matchesSearch =
+                    term === '' ||
+                    String(product.name).toLowerCase().includes(term) ||
+                    String(product.description).toLowerCase().includes(term) ||
+                    String(product.category).toLowerCase().includes(term);
+
                 return matchesCategory && matchesAlphabet && matchesSearch;
             });
+
             currentPage = 1;
             renderProducts();
             setupPagination();
         }
 
+        /* =========================================================
+           RENDER CARDS
+           ========================================================= */
         function renderProducts() {
             const grid = document.getElementById('products-grid');
             grid.innerHTML = '';
@@ -1270,38 +1328,52 @@
                 const priceHtml = `
                     <div class="price-tag-container">
                         <div class="discount-row">
-                            ${product.discount ? `<span class="discount-badge">${product.discount}</span>` : ''}
-                            <span class="discounted-price">₹${product.price}</span>
-                            ${product.mrp ? `<span class="mrp">₹${product.mrp}</span>` : ''}
+                            ${product.discount ? `<span class="discount-badge">${escapeHtml(product.discount)}</span>` : ''}
+                            <span class="discounted-price">₹${escapeHtml(product.price)}</span>
+                            ${product.mrp ? `<span class="mrp">₹${escapeHtml(product.mrp)}</span>` : ''}
                         </div>
                     </div>
                 `;
 
+                const imgSrc = product.image || FALLBACK_IMAGE;
+                const features = (product.features || []).slice(0, 2);
+
                 card.innerHTML = `
                     <div class="product-image-container">
-                        <img class="product-image" src="${product.image}" alt="${product.name}" loading="lazy">
-                        <span class="product-category-tag" title="${product.category}">${product.category}</span>
-                        ${product.badge ? `<span class="product-badge" title="${product.badge}">${product.badge}</span>` : ''}
+                        <img class="product-image" src="${escapeHtml(imgSrc)}" alt="${escapeHtml(product.name)}"
+                             loading="lazy" onerror="handleImgError(this)">
+                        <span class="product-category-tag" title="${escapeHtml(product.category)}">${escapeHtml(product.category)}</span>
+                        ${product.badge ? `<span class="product-badge" title="${escapeHtml(product.badge)}">${escapeHtml(product.badge)}</span>` : ''}
                     </div>
                     <div class="product-info">
-                        <h3 title="${product.name}">${product.name}</h3>
+                        <h3 title="${escapeHtml(product.name)}">${escapeHtml(product.name)}</h3>
                         <div class="desc-block">
-                            <p class="product-description">${product.description}</p>
+                            <p class="product-description">${escapeHtml(product.description)}</p>
                         </div>
                         <div class="product-features">
-                            <ul>${product.features.slice(0, 2).map(f => `<li>${f}</li>`).join('')}</ul>
+                            <ul>${features.map(f => `<li>${escapeHtml(f)}</li>`).join('')}</ul>
                         </div>
                         ${priceHtml}
                         <div class="product-actions">
-                            <a href="${product.link}" target="_blank" rel="noopener" class="btn-action btn-primary">Buy Now</a>
-                            <button class="btn-action btn-secondary" type="button" onclick='openQuickView(${JSON.stringify(product.id)})'>Quick View</button>
+                            <a href="${escapeHtml(product.link)}" target="_blank" rel="noopener" class="btn-action btn-primary">Buy Now</a>
+                            <button class="btn-action btn-secondary" type="button" data-quickview="1">Quick View</button>
                         </div>
                     </div>
                 `;
+
+                /* Attach the handler safely (no inline JSON injection bugs) */
+                const qvBtn = card.querySelector('[data-quickview]');
+                if (qvBtn) {
+                    qvBtn.addEventListener('click', () => openQuickView(product.id));
+                }
+
                 grid.appendChild(card);
             });
         }
 
+        /* =========================================================
+           PAGINATION
+           ========================================================= */
         function setupPagination() {
             const pagination = document.getElementById('pagination');
             pagination.innerHTML = '';
@@ -1353,6 +1425,9 @@
             }
         }
 
+        /* =========================================================
+           GALLERY
+           ========================================================= */
         function getProductImages(product) {
             if (Array.isArray(product.images) && product.images.filter(Boolean).length) {
                 return product.images.filter(Boolean);
@@ -1363,7 +1438,9 @@
         function buildGalleryHtml(product) {
             galleryImages = getProductImages(product);
             galleryIndex = 0;
-            if (!galleryImages.length) return '';
+            if (!galleryImages.length) {
+                return `<div class="gallery-main"><img src="${FALLBACK_IMAGE}" alt="No image"></div>`;
+            }
 
             const hasMany = galleryImages.length > 1;
 
@@ -1381,30 +1458,25 @@
                     ${galleryImages.map((src, i) => `
                         <button class="gallery-thumb ${i === 0 ? 'active' : ''}" type="button"
                                 onclick="setGalleryImage(${i})" aria-label="View image ${i + 1}">
-                            <img src="${src}" alt="${product.name} view ${i + 1}" loading="lazy">
+                            <img src="${escapeHtml(src)}" alt="${escapeHtml(product.name)} view ${i + 1}"
+                                 loading="lazy" onerror="handleImgError(this)">
                         </button>
                     `).join('')}
                 </div>
             ` : '';
 
-            // The fullscreen button and count are moved OUTSIDE the gallery-main div so they sit in the corners of the whole gallery area
             return `
                 <div class="modal-gallery">
                     <div class="gallery-main" id="gallery-main">
-                        <img id="gallery-main-img" src="${galleryImages[0]}" alt="${product.name}">
+                        <img id="gallery-main-img" src="${escapeHtml(galleryImages[0])}"
+                             alt="${escapeHtml(product.name)}" onerror="handleImgError(this)">
                         ${arrows}
                     </div>
                     ${thumbs}
-                    ${hasMany ? `
-                        <button class="gallery-fullscreen-btn" type="button" onclick="openFullScreen()" title="View Fullscreen">
-                            <i class="fas fa-expand"></i>
-                        </button>
-                        <span class="gallery-count"><span id="gallery-current">1</span> / ${galleryImages.length}</span>
-                    ` : `
-                        <button class="gallery-fullscreen-btn" type="button" onclick="openFullScreen()" title="View Fullscreen">
-                            <i class="fas fa-expand"></i>
-                        </button>
-                    `}
+                    <button class="gallery-fullscreen-btn" type="button" onclick="openFullScreen()" title="View Fullscreen">
+                        <i class="fas fa-expand"></i>
+                    </button>
+                    ${hasMany ? `<span class="gallery-count"><span id="gallery-current">1</span> / ${galleryImages.length}</span>` : ''}
                 </div>
             `;
         }
@@ -1434,8 +1506,7 @@
 
             const counter = document.getElementById('gallery-current');
             if (counter) counter.textContent = galleryIndex + 1;
-            
-            // Sync with fullscreen if it is open
+
             const fsOverlay = document.getElementById('fullscreen-overlay');
             if (fsOverlay.classList.contains('open')) {
                 updateFullScreenImage();
@@ -1444,6 +1515,9 @@
 
         function galleryStep(dir) { setGalleryImage(galleryIndex + dir); }
 
+        /* =========================================================
+           QUICK VIEW MODAL
+           ========================================================= */
         function openQuickView(productId) {
             const product = allProducts.find(p => String(p.id) === String(productId));
             if (!product) return;
@@ -1451,9 +1525,9 @@
             const modalPriceHtml = `
                 <div class="price-tag-container">
                     <div class="discount-row">
-                        ${product.discount ? `<span class="discount-badge">${product.discount}</span>` : ''}
-                        <span class="discounted-price">₹${product.price}</span>
-                        ${product.mrp ? `<span class="mrp">₹${product.mrp}</span>` : ''}
+                        ${product.discount ? `<span class="discount-badge">${escapeHtml(product.discount)}</span>` : ''}
+                        <span class="discounted-price">₹${escapeHtml(product.price)}</span>
+                        ${product.mrp ? `<span class="mrp">₹${escapeHtml(product.mrp)}</span>` : ''}
                     </div>
                 </div>
             `;
@@ -1465,16 +1539,16 @@
                 </div>
                 <div class="modal-details">
                     <div class="modal-tags">
-                        <span class="product-category-tag" title="${product.category}">${product.category}</span>
-                        ${product.badge ? `<span class="product-badge" title="${product.badge}">${product.badge}</span>` : ''}
+                        <span class="product-category-tag" title="${escapeHtml(product.category)}">${escapeHtml(product.category)}</span>
+                        ${product.badge ? `<span class="product-badge" title="${escapeHtml(product.badge)}">${escapeHtml(product.badge)}</span>` : ''}
                     </div>
-                    <h2>${product.name}</h2>
-                    <p class="product-description">${product.description}</p>
+                    <h2>${escapeHtml(product.name)}</h2>
+                    <p class="product-description">${escapeHtml(product.description)}</p>
                     <div class="product-features">
-                        <ul>${product.features.map(f => `<li>${f}</li>`).join('')}</ul>
+                        <ul>${(product.features || []).map(f => `<li>${escapeHtml(f)}</li>`).join('')}</ul>
                     </div>
                     ${modalPriceHtml}
-                    <a href="${product.link}" target="_blank" rel="noopener" class="btn-action btn-primary">
+                    <a href="${escapeHtml(product.link)}" target="_blank" rel="noopener" class="btn-action btn-primary">
                         <i class="fas fa-shopping-bag" style="margin-right: 6px;"></i> Buy Now
                     </a>
                 </div>
@@ -1490,7 +1564,6 @@
         function closeModal() {
             const modal = document.getElementById('product-modal');
             modal.classList.remove('open');
-            // Only remove modal-open if fullscreen is not open
             if (!document.getElementById('fullscreen-overlay').classList.contains('open')) {
                 document.body.classList.remove('modal-open');
             }
@@ -1500,7 +1573,9 @@
             if (e.target === this) closeModal();
         });
 
-        /* ============ FULLSCREEN LOGIC ============ */
+        /* =========================================================
+           FULLSCREEN
+           ========================================================= */
         function openFullScreen() {
             if (!galleryImages.length) return;
             const overlay = document.getElementById('fullscreen-overlay');
@@ -1512,23 +1587,20 @@
         function closeFullScreen() {
             const overlay = document.getElementById('fullscreen-overlay');
             overlay.classList.remove('open');
-            // Only remove modal-open if the Quick View modal is also closed
             if (!document.getElementById('product-modal').classList.contains('open')) {
                 document.body.classList.remove('modal-open');
             }
         }
 
         function fullscreenStep(dir) {
-            // Reuse the main gallery logic to keep everything in sync
-            setGalleryImage(galleryIndex + dir); 
-            // updateFullScreenImage is called inside setGalleryImage
+            setGalleryImage(galleryIndex + dir);
         }
 
         function updateFullScreenImage() {
             const img = document.getElementById('fullscreen-img');
             const count = document.getElementById('fullscreen-count');
             const hasMany = galleryImages.length > 1;
-            
+
             if (img && galleryImages.length) {
                 img.src = galleryImages[galleryIndex];
             }
@@ -1536,30 +1608,28 @@
                 count.style.display = hasMany ? 'block' : 'none';
                 count.textContent = `${galleryIndex + 1} / ${galleryImages.length}`;
             }
-            
+
             document.querySelectorAll('.fullscreen-nav').forEach(btn => {
                 btn.style.display = hasMany ? 'flex' : 'none';
             });
         }
 
-        // Click overlay to close
-        document.getElementById('fullscreen-overlay').addEventListener('click', function(e) {
-            // If clicking the dark background (not the image wrapper or buttons)
-            if (e.target === this) {
-                closeFullScreen();
-            }
+        document.getElementById('fullscreen-overlay').addEventListener('click', function (e) {
+            if (e.target === this) closeFullScreen();
         });
 
-        /* ============ KEYBOARD NAVIGATION ============ */
+        /* =========================================================
+           KEYBOARD
+           ========================================================= */
         document.addEventListener('keydown', (e) => {
             const fsOpen = document.getElementById('fullscreen-overlay').classList.contains('open');
             if (fsOpen) {
                 if (e.key === 'Escape') closeFullScreen();
                 if (e.key === 'ArrowLeft') fullscreenStep(-1);
                 if (e.key === 'ArrowRight') fullscreenStep(1);
-                return; // Stop propagation to modal
+                return;
             }
-            
+
             const isOpen = document.getElementById('product-modal').classList.contains('open');
             if (!isOpen) return;
             if (e.key === 'Escape') closeModal();
@@ -1567,13 +1637,14 @@
             if (e.key === 'ArrowRight') galleryStep(1);
         });
 
-        /* ============ SWIPE GESTURES ============ */
+        /* =========================================================
+           SWIPE GESTURES
+           ========================================================= */
         (function initSwipeGestures() {
             const modal = document.getElementById('product-modal');
             const fsOverlay = document.getElementById('fullscreen-overlay');
             let startX = null, startY = null;
 
-            // Touch functions
             const handleTouchStart = (e) => {
                 startX = e.touches[0].clientX;
                 startY = e.touches[0].clientY;
@@ -1583,7 +1654,7 @@
                 if (startX === null) return;
                 const dx = e.changedTouches[0].clientX - startX;
                 const dy = e.changedTouches[0].clientY - startY;
-                
+
                 if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) && galleryImages.length > 1) {
                     if (isFullscreen) {
                         fullscreenStep(dx < 0 ? 1 : -1);
@@ -1594,18 +1665,16 @@
                 startX = null; startY = null;
             };
 
-            // Modal gallery swipe
             modal.addEventListener('touchstart', (e) => {
                 if (!e.target.closest('.gallery-main')) return;
                 handleTouchStart(e);
             }, { passive: true });
-            
+
             modal.addEventListener('touchend', (e) => {
                 if (!e.target.closest('.gallery-main')) return;
                 handleTouchEnd(e, false);
             }, { passive: true });
 
-            // Fullscreen swipe
             fsOverlay.addEventListener('touchstart', handleTouchStart, { passive: true });
             fsOverlay.addEventListener('touchend', (e) => handleTouchEnd(e, true), { passive: true });
         })();
