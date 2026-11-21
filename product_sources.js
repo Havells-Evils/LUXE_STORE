@@ -9,7 +9,6 @@
    ========================================================= */
 
 const PRODUCT_SOURCES = [
-  'maliao.json'
   // 'products4.json',
   // 'products5.json',
   // ... add as many as you need (keep the trailing comma off the last entry)
